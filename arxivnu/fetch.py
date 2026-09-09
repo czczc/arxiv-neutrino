@@ -13,7 +13,7 @@ import feedparser
 import httpx
 
 from arxivnu.db import WORK_DIR, get_conn, init_db
-from arxivnu.utils import split_author_string
+from arxivnu.utils import pick_collaboration, split_author_string
 
 RSS_FEEDS = {
     "hep-ex": "https://rss.arxiv.org/rss/hep-ex",
@@ -154,7 +154,7 @@ def fetch_arxiv_api(fetch_date: str, categories: list[str]) -> list[dict]:
     return papers
 
 
-def fetch_inspirehep(arxiv_id: str) -> dict | None:
+def fetch_inspirehep(arxiv_id: str, title: str = "") -> dict | None:
     """Fetch metadata from InspireHEP for a single arxiv ID."""
     try:
         with httpx.Client(timeout=15) as client:
@@ -165,8 +165,7 @@ def fetch_inspirehep(arxiv_id: str) -> dict | None:
             return None
         rec = hits[0]
         meta = rec.get("metadata", {})
-        collabs = meta.get("collaborations", [])
-        collab = collabs[0].get("value", "") if collabs else ""
+        collab = pick_collaboration(meta.get("collaborations", []), title)
         doc_types = meta.get("document_type", [])
         doc_type = doc_types[0] if doc_types else ""
         pub_info = meta.get("publication_info", [{}])
@@ -297,7 +296,7 @@ def main():
     enriched: list[dict] = []
     for i, p in enumerate(survivors):
         print(f"  [{i+1}/{len(survivors)}] {p['arxiv_id']}...", end=" ", flush=True)
-        inspire = fetch_inspirehep(p["arxiv_id"])
+        inspire = fetch_inspirehep(p["arxiv_id"], p["title"])
         time.sleep(0.3)  # be polite to InspireHEP
         if inspire:
             p.update(inspire)
