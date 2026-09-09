@@ -35,8 +35,10 @@ if [ "$total" -eq 0 ]; then
   exit 0
 fi
 
-# File I/O only — the skill needs no Bash permission. The skill reads/writes
-# in cwd, so when ARXIV_WORK differs from the repo root run Claude there.
-( cd "$ARXIV_WORK" && claude --model "$MODEL" --permission-mode acceptEdits --max-turns 5 -p "/arxiv-summarize" )
+# Run from the repo root so Claude Code finds .claude/commands/arxiv-summarize.md;
+# the skill takes the work directory as its argument, and --add-dir lets it
+# read/write there when ARXIV_WORK is outside the repo. File I/O only.
+claude --model "$MODEL" --permission-mode acceptEdits --max-turns 5 \
+  --add-dir "$ARXIV_WORK" -p "/arxiv-summarize $ARXIV_WORK"
 
 uv run arxiv-apply

@@ -1,4 +1,4 @@
-Read `pending.json` from the current directory. For each paper, produce a JSON result and write all results to `results.json`.
+Work directory: `$ARGUMENTS` (if empty, the current directory). Read `pending.json` from that directory. For each paper, produce a JSON result and write all results to `results.json` in the same directory.
 
 ## Fixed taxonomy tags
 
@@ -22,7 +22,7 @@ Only assign tags from this exact list. Do not invent new tags.
 
 5. The `collaboration` field in `pending.json` comes from InspireHEP. If it is non-empty, do NOT add it as a tag — it is stored separately.
 
-6. Write all results (certain + ambiguous) to `results.json` as a JSON array.
+6. Write all results (certain + ambiguous) to `results.json` in the work directory as a JSON array.
 
 ## Example output entry
 

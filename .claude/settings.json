@@ -1,9 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Write(/results.json)",
-      "Write(/pending.json)",
-      "Read(/pending.json)"
+      "Read(/pending.json)",
+      "Edit(/pending.json)",
+      "Edit(/results.json)"
     ]
   }
 }
