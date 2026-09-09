@@ -1,0 +1,32 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Database (lives outside the repo on the server; local dev keeps it here)
+arxiv.db
+arxiv.db-shm
+arxiv.db-wal
+
+# Pipeline working files
+pending.json
+results.json
+results.applied.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Logs
+logs/
+
+# IDE / local
+.idea/
+.scratch/
+.claude/settings.local.json
+.DS_Store
+
+# Deployment material (server paths, hostnames, units, runbook) stays local
+deploy/
+scripts/deploy.env
