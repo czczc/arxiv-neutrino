@@ -1,6 +1,8 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import Icon from './Icon.vue';
+import ThemePicker from './ThemePicker.vue';
+import { useTheme } from '../composables/useTheme.js';
 import { useFilters } from '../composables/useFilters.js';
 
 const props = defineProps({ title: String, count: Number, isPhone: Boolean, menu: Boolean });
@@ -10,6 +12,13 @@ const draft = ref(q.value);
 const showSearch = ref(false);
 const input = ref(null);
 watch(q, (v) => (draft.value = v));
+
+const { isDark } = useTheme();
+const themeOpen = ref(location.hash === '#theme');
+const themeEl = ref(null);
+function onDocClick(e) { if (themeOpen.value && themeEl.value && !themeEl.value.contains(e.target)) themeOpen.value = false; }
+onMounted(() => document.addEventListener('click', onDocClick));
+onUnmounted(() => document.removeEventListener('click', onDocClick));
 
 function submit() { setQuery(draft.value.trim()); }
 function focusSearch() {
@@ -35,11 +44,19 @@ defineExpose({ focusSearch });
     <template v-if="isPhone">
       <button v-if="!showSearch" class="icon-btn" aria-label="Search" @click="focusSearch"><Icon name="search" :size="20" /></button>
       <button class="icon-btn" aria-label="Mark all read" title="Mark all loaded as read" @click="emit('mark-all')"><Icon name="check-all" :size="20" /></button>
+      <div ref="themeEl" class="theme-wrap">
+        <button class="icon-btn" aria-label="Theme" @click="themeOpen = !themeOpen"><Icon :name="isDark() ? 'moon' : 'sun'" :size="20" /></button>
+        <div v-if="themeOpen" class="pop"><ThemePicker /></div>
+      </div>
     </template>
     <template v-else>
       <button class="btn" @click="emit('mark-all')"><Icon name="check-all" :size="13" />Mark all read</button>
       <div class="kbd"><span><b>j</b><b>k</b> move</span><span><b>s</b> star</span><span><b>e</b> read</span><span><b>o</b> arXiv</span></div>
       <div class="local" title="Stars and read marks are stored in this browser only"><i></i>Local</div>
+      <div ref="themeEl" class="theme-wrap">
+        <button class="btn theme-btn" aria-label="Theme" title="Theme" @click="themeOpen = !themeOpen"><Icon :name="isDark() ? 'moon' : 'sun'" :size="14" /></button>
+        <div v-if="themeOpen" class="pop"><ThemePicker /></div>
+      </div>
     </template>
   </header>
 </template>
@@ -57,6 +74,9 @@ defineExpose({ focusSearch });
 .local { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--dim); }
 .local i { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
 .icon-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: var(--r-lg); color: var(--text-2); flex-shrink: 0; }
+.theme-wrap { position: relative; }
+.theme-btn { width: 28px; padding: 0; justify-content: center; }
+.pop { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: 220px; padding: 12px; background: var(--pane); border: 1px solid var(--rule-hard); border-radius: var(--r-lg); box-shadow: 0 8px 24px var(--scrim); }
 .title { flex: 1; font-weight: 700; font-size: 17px; color: var(--ink); display: flex; align-items: baseline; gap: 8px; white-space: nowrap; overflow: hidden; }
 .title .n { font-size: 13px; font-weight: 500; color: var(--accent); }
 @media (max-width: 699px) {
@@ -65,4 +85,5 @@ defineExpose({ focusSearch });
   .search input { font-size: 15px; }
 }
 @media (max-width: 1099px) { .kbd { display: none; } }
+@media (max-width: 699px) { .pop { width: 260px; padding: 14px; } }
 </style>

@@ -24,5 +24,5 @@ const tabs = [
 .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 500; color: var(--faint); }
 .tab.on { color: var(--accent); }
 .ic { position: relative; display: flex; }
-.badge { position: absolute; top: -5px; right: -16px; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 999px; background: var(--accent); color: #fff; }
+.badge { position: absolute; top: -5px; right: -16px; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
 </style>

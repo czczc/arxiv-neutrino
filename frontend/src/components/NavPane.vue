@@ -12,6 +12,7 @@ const { facets } = useFacets();
 const { tags, collab, toggleTag, setCollab, active, clear } = useFilters();
 const ls = useLocalState();
 const showAllTags = ref(false);
+const showAllCollabs = ref(false);
 const fileInput = ref(null);
 const importMsg = ref('');
 
@@ -57,9 +58,10 @@ async function doImport(e) {
 
     <div v-if="facets.collaborations.length" class="group">
       <h4>Collaboration</h4>
-      <button v-for="c in facets.collaborations" :key="c.collaboration" class="row" :class="{ on: collab === c.collaboration }" @click="setCollab(c.collaboration)">
+      <button v-for="c in (showAllCollabs ? facets.collaborations : facets.collaborations.slice(0, 10))" :key="c.collaboration" class="row" :class="{ on: collab === c.collaboration }" @click="setCollab(c.collaboration)">
         <span>{{ c.collaboration }}</span><span class="c mono">{{ c.count }}</span>
       </button>
+      <button v-if="facets.collaborations.length > 10" class="more" @click="showAllCollabs = !showAllCollabs">{{ showAllCollabs ? 'Fewer' : `All ${facets.collaborations.length} collaborations` }}</button>
     </div>
 
     <div class="group">
@@ -91,7 +93,7 @@ async function doImport(e) {
 h4 { margin: 0 0 4px 8px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 8px; border-radius: var(--r-md); color: var(--text-2); font-size: 12.5px; text-align: left; width: 100%; }
 .row:hover { background: var(--rule-soft); }
-.row.on { background: #e5e9f2; color: var(--ink); font-weight: 600; }
+.row.on { background: var(--nav-on); color: var(--ink); font-weight: 600; }
 .row .c { font-size: 11px; color: var(--faint); }
 .row.on .c { color: var(--accent); }
 .more { align-self: flex-start; margin: 4px 8px 0; font-size: 12px; color: var(--accent); }

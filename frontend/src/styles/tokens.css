@@ -1,20 +1,30 @@
-:root {
+/* Theme tokens. The <html data-theme="…"> attribute selects a palette;
+   src/composables/useTheme.js sets it from the saved preference. Every colour
+   used by a component comes from here so palettes stay swappable. */
+
+:root, [data-theme="cool"] {
+  color-scheme: light;
   --bg: #f4f5f7;
   --pane: #ffffff;
   --pane-2: #f8f9fb;
   --sel: #eef2fa;
+  --nav-on: #e5e9f2;
 
   --ink: #11141a;
   --body: #171b22;
   --text-2: #2b313c;
   --text-3: #4a5160;
+  --read: #3f4654;
   --dim: #6b7280;
   --faint: #8a919e;
   --ghost: #c2c7d0;
+  --on-ink: #ffffff;
+  --on-accent: #ffffff;
 
   --rule: #e1e4ea;
   --rule-soft: #eef0f4;
   --rule-hard: #d5d9e1;
+  --scrim: rgba(17, 20, 26, 0.35);
 
   --accent: oklch(0.48 0.13 250);
   --accent-ink: oklch(0.38 0.13 250);
@@ -24,6 +34,8 @@
   --star-rule: oklch(0.85 0.08 65);
   --good: oklch(0.55 0.13 150);
   --collab-bg: oklch(0.94 0.04 65);
+  --banner-bg: #fff8e6;
+  --banner-rule: oklch(0.88 0.08 80);
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
@@ -35,4 +47,55 @@
   --nav-w: 200px;
   --list-w: 440px;
   --bar-h: 44px;
+}
+
+/* Warm paper, amber accent (matches dunecat) */
+[data-theme="paper"] {
+  color-scheme: light;
+  --bg: #fbf8f1; --pane: #fefcf7; --pane-2: #f4efe3; --sel: oklch(0.95 0.04 70); --nav-on: #ebe4d4;
+  --ink: #1c1812; --body: #2a241b; --text-2: #3a3328; --text-3: #514838; --read: #4a4236;
+  --dim: #6e6453; --faint: #a59982; --ghost: #cdc3aa; --on-ink: #fefcf7; --on-accent: #ffffff;
+  --rule: #e6dfcd; --rule-soft: #ede7d7; --rule-hard: #cdc3aa; --scrim: rgba(28, 24, 18, 0.35);
+  --accent: oklch(0.55 0.13 55); --accent-ink: oklch(0.42 0.13 55);
+  --star: oklch(0.6 0.15 65); --star-ink: oklch(0.45 0.13 65); --star-bg: oklch(0.96 0.03 70); --star-rule: oklch(0.85 0.08 65);
+  --good: oklch(0.50 0.10 145); --collab-bg: oklch(0.93 0.05 70);
+  --banner-bg: oklch(0.96 0.04 85); --banner-rule: oklch(0.86 0.08 80);
+}
+
+/* Green-tinted neutrals, green accent */
+[data-theme="forest"] {
+  color-scheme: light;
+  --bg: #f2f6f3; --pane: #fbfdfb; --pane-2: #f0f5f1; --sel: #e3efe7; --nav-on: #dfe9e2;
+  --ink: #121a15; --body: #1a231d; --text-2: #2d3a31; --text-3: #4b5a50; --read: #414f46;
+  --dim: #6a7a6f; --faint: #8a9a8f; --ghost: #bfcbc3; --on-ink: #fbfdfb; --on-accent: #ffffff;
+  --rule: #dbe5de; --rule-soft: #e8efea; --rule-hard: #c9d6cd; --scrim: rgba(18, 26, 21, 0.35);
+  --accent: oklch(0.50 0.12 155); --accent-ink: oklch(0.40 0.12 155);
+  --star: oklch(0.6 0.15 65); --star-ink: oklch(0.45 0.13 65); --star-bg: oklch(0.97 0.03 65); --star-rule: oklch(0.85 0.08 65);
+  --good: oklch(0.50 0.12 155); --collab-bg: oklch(0.94 0.04 65);
+  --banner-bg: #f6f3e2; --banner-rule: oklch(0.88 0.08 80);
+}
+
+/* Violet-tinted neutrals, violet accent */
+[data-theme="lavender"] {
+  color-scheme: light;
+  --bg: #f5f4f9; --pane: #fdfcff; --pane-2: #f3f1f9; --sel: #ebe7f7; --nav-on: #e6e1f3;
+  --ink: #16141f; --body: #1d1a28; --text-2: #302c40; --text-3: #4d485f; --read: #433e55;
+  --dim: #6f6a80; --faint: #8f8a9f; --ghost: #c6c2d3; --on-ink: #fdfcff; --on-accent: #ffffff;
+  --rule: #e2dfeb; --rule-soft: #edeaf3; --rule-hard: #cfcadd; --scrim: rgba(22, 20, 31, 0.35);
+  --accent: oklch(0.52 0.16 295); --accent-ink: oklch(0.42 0.16 295);
+  --star: oklch(0.6 0.15 65); --star-ink: oklch(0.45 0.13 65); --star-bg: oklch(0.97 0.03 65); --star-rule: oklch(0.85 0.08 65);
+  --good: oklch(0.55 0.13 150); --collab-bg: oklch(0.94 0.04 65);
+  --banner-bg: #f8f2e6; --banner-rule: oklch(0.88 0.08 80);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #14171d; --pane: #1b1f27; --pane-2: #20252e; --sel: #263041; --nav-on: #2a3140;
+  --ink: #f1f3f7; --body: #e2e6ee; --text-2: #cfd5df; --text-3: #aeb6c4; --read: #a3abb9;
+  --dim: #8b93a3; --faint: #6d7584; --ghost: #4a515e; --on-ink: #14171d; --on-accent: #0f1216;
+  --rule: #2b313c; --rule-soft: #242932; --rule-hard: #3a4150; --scrim: rgba(0, 0, 0, 0.55);
+  --accent: oklch(0.72 0.12 250); --accent-ink: oklch(0.80 0.10 250);
+  --star: oklch(0.75 0.14 75); --star-ink: oklch(0.82 0.12 80); --star-bg: oklch(0.30 0.05 70); --star-rule: oklch(0.42 0.08 70);
+  --good: oklch(0.70 0.12 150); --collab-bg: oklch(0.32 0.05 65);
+  --banner-bg: #2c2716; --banner-rule: #4a4020;
 }

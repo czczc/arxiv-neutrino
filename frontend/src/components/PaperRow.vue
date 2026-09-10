@@ -59,7 +59,7 @@ function te() {
 
 <style scoped>
 .swipe { position: relative; overflow: hidden; border-bottom: 1px solid var(--rule-soft); }
-.reveal { position: absolute; top: 0; bottom: 0; width: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; color: #fff; opacity: 0.6; }
+.reveal { position: absolute; top: 0; bottom: 0; width: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--on-accent); opacity: 0.6; }
 .reveal.arm { opacity: 1; }
 .reveal.left { left: 0; background: var(--good); }
 .reveal.right { right: 0; background: var(--star); }
@@ -72,7 +72,7 @@ function te() {
 .st.on { color: var(--star); }
 .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .t { font-weight: 600; font-size: 13px; color: var(--ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.row.read .t { font-weight: 400; color: #5a6170; }
+.row.read .t { font-weight: 400; color: var(--read); }
 .m { font-size: 11.5px; color: var(--faint); display: flex; gap: 6px; white-space: nowrap; overflow: hidden; }
 .m b { color: var(--text-3); font-weight: 600; }
 .m .tg { overflow: hidden; text-overflow: ellipsis; }

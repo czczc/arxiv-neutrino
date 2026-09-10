@@ -14,6 +14,8 @@ const paths = {
   inbox: 'M4 5h16v11H4zM4 16l3-4h10l3 4',
   archive: 'M3 7h18v13H3zM3 4h18v3H3zM10 11h4',
   filter: 'M3 5h18l-7 8v6l-4-2v-4z',
+  moon: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z',
+  sun: 'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
 };
 </script>
 

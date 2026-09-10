@@ -17,7 +17,7 @@ function markOld() { ls.setReadBefore(todayIso()); ls.dismissBanner(); }
 </template>
 
 <style scoped>
-.banner { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #fff8e6; border-bottom: 1px solid oklch(0.88 0.08 80); font-size: 12.5px; color: var(--text-2); }
+.banner { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--banner-bg); border-bottom: 1px solid var(--banner-rule); font-size: 12.5px; color: var(--text-2); }
 .txt { flex: 1; }
 .acts { display: flex; gap: 8px; }
 @media (max-width: 699px) {

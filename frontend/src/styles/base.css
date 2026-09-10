@@ -23,8 +23,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .btn:hover { background: var(--pane-2); }
 .btn.star-on { color: var(--star-ink); border-color: var(--star-rule); background: var(--star-bg); }
 .btn.read-on { color: var(--good); }
-.btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
-.btn.primary:hover { background: #2b313c; }
+.btn.primary { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.btn.primary:hover { opacity: 0.9; }
 
 .tag {
   font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; border-radius: var(--r-sm);

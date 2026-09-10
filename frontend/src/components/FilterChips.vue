@@ -20,7 +20,7 @@ const { tags, collab, q, date, toggleTag, setCollab, setQuery, setDate, active }
 .chips { display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; border-bottom: 1px solid var(--rule-soft); background: var(--pane); scrollbar-width: none; }
 .chips::-webkit-scrollbar { display: none; }
 .chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--rule-hard); background: var(--pane); font-size: 12.5px; font-weight: 500; color: var(--text-2); white-space: nowrap; }
-.chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.chip.on { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
 .chip.add { color: var(--accent); border-style: dashed; }
 @media (max-width: 699px) {
   .chips { padding: 10px 12px; }
