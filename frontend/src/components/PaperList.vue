@@ -30,7 +30,7 @@ const collapsed = reactive({});
       <div class="lhead" role="button" :aria-expanded="!collapsed[d.date]" @click="collapsed[d.date] = !collapsed[d.date]">
         <Icon name="down" :size="12" class="chev" :class="{ closed: collapsed[d.date] }" />
         <span>{{ shortDay(d.date) }}</span>
-        <span class="mono cnt">{{ d.papers.length }}<template v-if="unreadIn(d) && unreadIn(d) !== d.papers.length"> · {{ unreadIn(d) }} unread</template></span>
+        <span class="cnt">{{ d.papers.length }} {{ d.papers.length === 1 ? 'paper' : 'papers' }}<template v-if="unreadIn(d) && unreadIn(d) !== d.papers.length"> · {{ unreadIn(d) }} unread</template></span>
         <button v-if="unreadIn(d)" class="mk" @click.stop="emit('mark-day', d.papers)">Mark day read</button>
       </div>
       <PaperRow v-for="p in (collapsed[d.date] ? [] : d.papers)" :key="p.arxiv_id" :paper="p" :selected="p.arxiv_id === selectedId"
@@ -49,8 +49,8 @@ const collapsed = reactive({});
 .lhead { cursor: pointer; user-select: none; }
 .chev { flex-shrink: 0; transition: transform 0.15s; }
 .chev.closed { transform: rotate(-90deg); }
-.cnt { font-weight: 400; letter-spacing: 0; }
-.mk { margin-left: auto; font-weight: 500; font-size: 11.5px; color: var(--accent); height: 34px; }
+.cnt { margin-left: auto; font-weight: 400; letter-spacing: 0; text-transform: none; }
+.mk { font-weight: 500; font-size: 11.5px; color: var(--accent); height: 34px; }
 .empty { padding: 40px 16px; text-align: center; color: var(--faint); }
 .more { margin: 14px auto 24px; padding: 8px 16px; border: 1px solid var(--rule-hard); border-radius: var(--r-md); color: var(--text-2); font-size: 12.5px; font-weight: 500; background: var(--pane); }
 @media (max-width: 699px) {

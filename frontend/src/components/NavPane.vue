@@ -24,9 +24,9 @@ const collapsed = reactive({ collabs: !!saved.collabs, tags: !!saved.tags });
 watch(collapsed, (v) => { try { localStorage.setItem(UI_KEY, JSON.stringify(v)); } catch { /* ignore */ } });
 
 const folders = [
+  { to: '/all', label: 'All papers' },
   { to: '/unread', label: 'Unread' },
   { to: '/starred', label: 'Starred' },
-  { to: '/all', label: 'All papers' },
   { to: '/archive', label: 'Archive' },
 ];
 const folderCount = (f) => f.to === '/unread' ? props.unreadCount : f.to === '/starred' ? ls.starredIds().length : f.to === '/all' ? facets.value.total : null;

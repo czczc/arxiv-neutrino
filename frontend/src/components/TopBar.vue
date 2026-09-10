@@ -11,7 +11,10 @@ const { q, setQuery } = useFilters();
 const draft = ref(q.value);
 const showSearch = ref(false);
 const input = ref(null);
-watch(q, (v) => (draft.value = v));
+watch(q, (v) => { if (v !== draft.value.trim()) draft.value = v; });
+// Search as you type, after a short pause.
+let timer;
+watch(draft, (v) => { clearTimeout(timer); timer = setTimeout(() => { if (v.trim() !== q.value) submit(); }, 250); });
 
 const { isDark } = useTheme();
 const themeOpen = ref(location.hash === '#theme');
@@ -20,7 +23,7 @@ function onDocClick(e) { if (themeOpen.value && themeEl.value && !themeEl.value.
 onMounted(() => document.addEventListener('click', onDocClick));
 onUnmounted(() => document.removeEventListener('click', onDocClick));
 
-function submit() { setQuery(draft.value.trim()); }
+function submit() { clearTimeout(timer); setQuery(draft.value.trim()); }
 function focusSearch() {
   showSearch.value = true;
   requestAnimationFrame(() => input.value?.focus());
@@ -31,7 +34,7 @@ defineExpose({ focusSearch });
 <template>
   <header class="bar">
     <button v-if="menu" class="icon-btn" aria-label="Filters" @click="emit('menu')"><Icon name="menu" :size="22" /></button>
-    <span v-if="!isPhone" class="brand">ArXiv Neutrino</span>
+    <span v-if="!isPhone" class="brand">Neutrino Daily</span>
 
     <div v-if="isPhone && !showSearch" class="title">{{ title }} <span class="mono n">{{ count }}</span></div>
 

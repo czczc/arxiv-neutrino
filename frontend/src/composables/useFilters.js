@@ -12,18 +12,18 @@ export function useFilters() {
   const date = computed(() => String(route.query.date || ''));
   const active = computed(() => tags.value.length > 0 || !!collab.value || !!q.value || !!date.value);
 
-  function push(patch) {
+  function push(patch, method = 'push') {
     const query = { ...route.query, ...patch };
     for (const k of Object.keys(query)) if (!query[k]) delete query[k];
     delete query.paper; // selection resets when filters change
-    router.push({ path: route.path, query });
+    router[method]({ path: route.path, query });
   }
   const toggleTag = (t) => {
     const next = tags.value.includes(t) ? tags.value.filter((x) => x !== t) : [...tags.value, t];
     push({ tags: next.join(',') });
   };
   const setCollab = (c) => push({ collab: collab.value === c ? '' : c });
-  const setQuery = (s) => push({ q: s });
+  const setQuery = (s) => push({ q: s }, 'replace'); // typed live; don't spam history
   const setDate = (d) => push({ date: d });
   const clear = () => push({ tags: '', collab: '', q: '', date: '' });
 
