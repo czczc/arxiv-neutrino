@@ -35,7 +35,9 @@ const topbar = ref(null);
 const selectedId = computed(() => String(route.query.paper || ''));
 
 const titles = { unread: 'Unread', starred: 'Starred', all: 'All papers' };
-const visible = computed(() => props.mode === 'unread' ? papers.value.filter((p) => !ls.isRead(p)) : papers.value);
+const visible = computed(() => props.mode === 'unread'
+  ? papers.value.filter((p) => !ls.isRead(p) || p.arxiv_id === selectedId.value)
+  : papers.value);
 const unreadLoaded = computed(() => papers.value.filter((p) => !ls.isRead(p)).length);
 const hasMore = computed(() => !exhausted.value);
 
@@ -94,7 +96,7 @@ function onKey(e) {
     case 'j': case 'ArrowDown': if (list.length) select(list[Math.min(idx + 1, list.length - 1)]); e.preventDefault(); break;
     case 'k': case 'ArrowUp': if (list.length) select(list[Math.max(idx - 1, 0)]); e.preventDefault(); break;
     case 's': if (cur) ls.toggleStar(cur.arxiv_id); break;
-    case 'e': if (cur) { ls.toggleRead(cur); if (props.mode === 'unread' && list[idx + 1]) select(list[idx + 1]); } break;
+    case 'e': if (cur) { if (props.mode === 'unread') { ls.markRead([cur.arxiv_id]); if (list[idx + 1]) select(list[idx + 1]); } else ls.toggleRead(cur); } break;
     case 'o': if (cur) { ls.markRead([cur.arxiv_id]); window.open(arxivUrl(cur.arxiv_id), '_blank', 'noopener'); } break;
     case '/': topbar.value?.focusSearch(); e.preventDefault(); break;
   }

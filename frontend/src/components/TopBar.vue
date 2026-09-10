@@ -51,7 +51,7 @@ defineExpose({ focusSearch });
     </template>
     <template v-else>
       <button class="btn" @click="emit('mark-all')"><Icon name="check-all" :size="13" />Mark all read</button>
-      <div class="kbd"><span><b>j</b><b>k</b> move</span><span><b>s</b> star</span><span><b>e</b> read</span><span><b>o</b> arXiv</span></div>
+      <div class="kbd"><span><b>j</b><b>k</b> move</span><span><b>s</b> star</span><span><b>e</b> read · next</span><span><b>o</b> arXiv</span></div>
       <div class="local" title="Stars and read marks are stored in this browser only"><i></i>Local</div>
       <div ref="themeEl" class="theme-wrap">
         <button class="btn theme-btn" aria-label="Theme" title="Theme" @click="themeOpen = !themeOpen"><Icon :name="isDark() ? 'moon' : 'sun'" :size="14" /></button>

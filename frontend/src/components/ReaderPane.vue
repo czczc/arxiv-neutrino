@@ -15,7 +15,8 @@ const error = ref('');
 watch(() => props.paperId, async (id) => {
   paper.value = null; error.value = '';
   if (!id) return;
-  try { paper.value = await fetchPaper(id); } catch (e) { error.value = e.message; }
+  try { paper.value = await fetchPaper(id); } catch (e) { error.value = e.message; return; }
+  if (!ls.isRead(paper.value)) ls.markRead([paper.value.arxiv_id]);
 }, { immediate: true });
 
 const title = computed(() => renderMath(paper.value?.title));

@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
+import Icon from './Icon.vue';
 import { useRoute } from 'vue-router';
 import { useFacets } from '../composables/useFacets.js';
 import { useFilters } from '../composables/useFilters.js';
@@ -15,6 +16,12 @@ const showAllTags = ref(false);
 const showAllCollabs = ref(false);
 const fileInput = ref(null);
 const importMsg = ref('');
+
+const UI_KEY = 'arxivnu:nav:v1';
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem(UI_KEY)) || {}; } catch { /* ignore */ }
+const collapsed = reactive({ collabs: !!saved.collabs, tags: !!saved.tags });
+watch(collapsed, (v) => { try { localStorage.setItem(UI_KEY, JSON.stringify(v)); } catch { /* ignore */ } });
 
 const folders = [
   { to: '/unread', label: 'Unread' },
@@ -57,19 +64,23 @@ async function doImport(e) {
     </div>
 
     <div v-if="facets.collaborations.length" class="group">
-      <h4>Collaboration</h4>
+      <button class="h4" :aria-expanded="!collapsed.collabs" @click="collapsed.collabs = !collapsed.collabs"><Icon name="down" :size="12" class="chev" :class="{ closed: collapsed.collabs }" />Collaboration</button>
+      <template v-if="!collapsed.collabs">
       <button v-for="c in (showAllCollabs ? facets.collaborations : facets.collaborations.slice(0, 10))" :key="c.collaboration" class="row" :class="{ on: collab === c.collaboration }" @click="setCollab(c.collaboration)">
         <span>{{ c.collaboration }}</span><span class="c mono">{{ c.count }}</span>
       </button>
       <button v-if="facets.collaborations.length > 10" class="more" @click="showAllCollabs = !showAllCollabs">{{ showAllCollabs ? 'Fewer' : `All ${facets.collaborations.length} collaborations` }}</button>
+      </template>
     </div>
 
     <div class="group">
-      <h4>Tags</h4>
+      <button class="h4" :aria-expanded="!collapsed.tags" @click="collapsed.tags = !collapsed.tags"><Icon name="down" :size="12" class="chev" :class="{ closed: collapsed.tags }" />Tags</button>
+      <template v-if="!collapsed.tags">
       <button v-for="t in (showAllTags ? facets.tags : facets.tags.slice(0, 12))" :key="t.tag" class="row" :class="{ on: tags.includes(t.tag) }" @click="toggleTag(t.tag)">
         <span>{{ t.tag }}</span><span class="c mono">{{ t.count }}</span>
       </button>
       <button v-if="facets.tags.length > 12" class="more" @click="showAllTags = !showAllTags">{{ showAllTags ? 'Fewer tags' : `All ${facets.tags.length} tags` }}</button>
+      </template>
     </div>
 
     <button v-if="active" class="more" @click="clear">Clear filters</button>
@@ -90,7 +101,10 @@ async function doImport(e) {
 <style scoped>
 .nav { width: var(--nav-w); flex-shrink: 0; padding: 12px 10px; display: flex; flex-direction: column; gap: 14px; border-right: 1px solid var(--rule); overflow-y: auto; background: var(--bg); }
 .group { display: flex; flex-direction: column; }
-h4 { margin: 0 0 4px 8px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.h4 { display: flex; align-items: center; gap: 4px; margin: 0 0 4px 4px; padding: 2px 4px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.h4:hover { color: var(--text-3); }
+.chev { transition: transform 0.15s; }
+.chev.closed { transform: rotate(-90deg); }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 8px; border-radius: var(--r-md); color: var(--text-2); font-size: 12.5px; text-align: left; width: 100%; }
 .row:hover { background: var(--rule-soft); }
 .row.on { background: var(--nav-on); color: var(--ink); font-weight: 600; }
@@ -104,6 +118,7 @@ h4 { margin: 0 0 4px 8px; font-size: 10.5px; font-weight: 600; letter-spacing: 0
 @media (max-width: 699px) {
   .nav { width: min(320px, 85vw); padding: 14px 12px; gap: 18px; }
   .row { min-height: 44px; font-size: 15px; padding: 0 12px; }
+  .h4 { min-height: 36px; font-size: 12px; }
   .row .c { font-size: 12.5px; }
   .more { font-size: 14px; min-height: 44px; display: flex; align-items: center; }
   .foot { font-size: 13px; }
