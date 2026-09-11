@@ -47,6 +47,7 @@ defineExpose({ focusSearch });
     <template v-if="isPhone">
       <button v-if="!showSearch" class="icon-btn" aria-label="Search" @click="focusSearch"><Icon name="search" :size="20" /></button>
       <button class="icon-btn" aria-label="Mark all read" title="Mark all loaded as read" @click="emit('mark-all')"><Icon name="check-all" :size="20" /></button>
+      <router-link to="/archive" class="icon-btn" aria-label="Archive"><Icon name="calendar" :size="20" /></router-link>
       <router-link to="/about" class="icon-btn" aria-label="About"><Icon name="info" :size="20" /></router-link>
       <div ref="themeEl" class="theme-wrap">
         <button class="icon-btn" aria-label="Theme" @click="themeOpen = !themeOpen"><Icon :name="isDark() ? 'moon' : 'sun'" :size="20" /></button>
@@ -56,6 +57,7 @@ defineExpose({ focusSearch });
     <template v-else>
       <button class="btn" @click="emit('mark-all')"><Icon name="check-all" :size="13" />Mark all read</button>
       <div class="kbd"><span><b>j</b><b>k</b> move</span><span><b>s</b> star</span><span><b>e</b> read · next</span><span><b>o</b> arXiv</span><span><b>d</b> delete</span></div>
+      <router-link to="/archive" class="btn theme-btn" aria-label="Archive" title="Archive"><Icon name="calendar" :size="14" /></router-link>
       <router-link to="/about" class="btn theme-btn" aria-label="About" title="About"><Icon name="info" :size="14" /></router-link>
       <div ref="themeEl" class="theme-wrap">
         <button class="btn theme-btn" aria-label="Theme" title="Theme" @click="themeOpen = !themeOpen"><Icon :name="isDark() ? 'moon' : 'sun'" :size="14" /></button>

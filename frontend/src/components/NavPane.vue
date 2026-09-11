@@ -28,7 +28,6 @@ const folders = [
   { to: '/unread', label: 'Unread' },
   { to: '/starred', label: 'Starred' },
   { to: '/deleted', label: 'Deleted' },
-  { to: '/archive', label: 'Archive' },
 ];
 const folderCount = (f) => f.to === '/unread' ? props.unreadCount : f.to === '/starred' ? ls.starredIds().length : f.to === '/deleted' ? ls.deletedIds().length : f.to === '/all' ? Math.max(0, facets.value.total - ls.deletedIds().length) : null;
 const isOn = (f) => route.path === f.to || (f.to === '/all' && route.path.startsWith('/paper'));

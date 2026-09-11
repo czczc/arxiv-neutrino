@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import Icon from './Icon.vue';
 import { renderMath } from '../lib/math.js';
 
@@ -14,6 +14,10 @@ const authors = computed(() => {
   return names.join(', ');
 });
 const title = computed(() => renderMath(props.paper.title));
+
+// Keyboard navigation: keep the selected row on screen.
+const el = ref(null);
+watch(() => props.selected, (on) => { if (on) el.value?.scrollIntoView({ block: 'nearest' }); });
 
 // Touch swipe: right = toggle read, left = toggle star. Visual reveal while
 // dragging; committed past 80px. Mouse users get the buttons in the reader.
@@ -36,7 +40,7 @@ function te() {
 </script>
 
 <template>
-  <div class="swipe" @touchstart.passive="ts" @touchmove.passive="tm" @touchend="te" @touchcancel="te">
+  <div ref="el" class="swipe" @touchstart.passive="ts" @touchmove.passive="tm" @touchend="te" @touchcancel="te">
     <div class="reveal left" :class="{ arm: dx > 80 }"><Icon name="check" :size="20" />{{ read ? 'Unread' : 'Read' }}</div>
     <div class="reveal right" :class="{ arm: dx < -80 }"><Icon name="star" :size="20" />{{ starred ? 'Unstar' : 'Star' }}</div>
     <div class="row" :class="{ sel: selected, read }" :style="dx ? { transform: `translateX(${dx}px)` } : null" @click="emit('select')">
@@ -58,7 +62,7 @@ function te() {
 </template>
 
 <style scoped>
-.swipe { position: relative; overflow: hidden; border-bottom: 1px solid var(--rule-soft); }
+.swipe { position: relative; overflow: hidden; border-bottom: 1px solid var(--rule-soft); scroll-margin-top: 34px; }
 .reveal { position: absolute; top: 0; bottom: 0; width: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--on-accent); opacity: 0.6; }
 .reveal.arm { opacity: 1; }
 .reveal.left { left: 0; background: var(--good); }

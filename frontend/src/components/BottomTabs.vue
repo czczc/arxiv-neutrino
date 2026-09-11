@@ -7,7 +7,6 @@ const tabs = [
   { to: '/all', label: 'All', icon: 'inbox' },
   { to: '/unread', label: 'Unread', icon: 'check' },
   { to: '/starred', label: 'Starred', icon: 'star' },
-  { to: '/archive', label: 'Archive', icon: 'archive' },
 ];
 </script>
 
