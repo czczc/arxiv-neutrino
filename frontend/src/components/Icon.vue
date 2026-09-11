@@ -12,6 +12,8 @@ const paths = {
   external: 'M7 17L17 7M9 7h8v8',
   close: 'M6 6l12 12M18 6L6 18',
   calendar: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',
+  folder: 'M3 7h6l2 2h10v11H3z',
+  plus: 'M12 5v14M5 12h14',
   info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8v.5',
   trash: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5',
   inbox: 'M4 5h16v11H4zM4 16l3-4h10l3 4',

@@ -16,7 +16,7 @@ import { useMedia } from '../composables/useMedia.js';
 import { useFacets } from '../composables/useFacets.js';
 import { useQueue } from '../composables/useQueue.js';
 
-const props = defineProps({ mode: { type: String, default: 'unread' } });
+const props = defineProps({ mode: { type: String, default: 'unread' }, folderId: String });
 const route = useRoute();
 const router = useRouter();
 const { apiParams, active } = useFilters();
@@ -35,9 +35,14 @@ const topbar = ref(null);
 const selectedId = computed(() => String(route.query.paper || ''));
 
 const titles = { unread: 'Unread', starred: 'Starred', all: 'All papers', deleted: 'Deleted' };
-const byIds = computed(() => props.mode === 'starred' || props.mode === 'deleted');
+const folder = computed(() => (props.mode === 'folder' ? ls.folder(props.folderId) : null));
+const title = computed(() => (props.mode === 'folder' ? folder.value?.name || 'Folder' : titles[props.mode]));
+const byIds = computed(() => ['starred', 'deleted', 'folder'].includes(props.mode));
+// A folder that no longer exists (deleted here or in another tab) falls back to All.
+watch(() => props.mode === 'folder' && !folder.value, (gone) => { if (gone) router.replace('/all'); }, { immediate: true });
 // Deleted papers show only in the Deleted folder.
 const visible = computed(() => props.mode === 'deleted' ? papers.value.filter((p) => ls.isDeleted(p.arxiv_id))
+  : props.mode === 'folder' ? papers.value.filter((p) => ls.inFolder(props.folderId, p.arxiv_id) && !ls.isDeleted(p.arxiv_id))
   : props.mode === 'unread' ? papers.value.filter((p) => (!ls.isRead(p) || p.arxiv_id === selectedId.value) && !ls.isDeleted(p.arxiv_id))
   : papers.value.filter((p) => !ls.isDeleted(p.arxiv_id)));
 const unreadLoaded = computed(() => papers.value.filter((p) => !ls.isRead(p)).length);
@@ -49,7 +54,7 @@ async function loadPage(reset = false) {
   try {
     if (reset) { papers.value = []; nextBefore.value = null; exhausted.value = false; }
     if (byIds.value) {
-      const ids = props.mode === 'starred' ? ls.starredIds() : ls.deletedIds();
+      const ids = props.mode === 'starred' ? ls.starredIds() : props.mode === 'deleted' ? ls.deletedIds() : ls.folderIds(props.folderId);
       const out = [];
       for (let i = 0; i < ids.length; i += 150) {
         const r = await fetchPapers({ ...apiParams.value, ids: ids.slice(i, i + 150).join(',') });
@@ -75,7 +80,7 @@ watch([visible, loading, exhausted], () => {
 });
 // Key on values, not the apiParams object: selecting a row rewrites the
 // route query (?paper=), which would otherwise recreate the object and reload.
-const listKey = computed(() => JSON.stringify([props.mode, apiParams.value]));
+const listKey = computed(() => JSON.stringify([props.mode, props.folderId, apiParams.value]));
 watch(listKey, () => loadPage(true), { immediate: true });
 
 function select(p) {
@@ -114,12 +119,13 @@ const emptyText = computed(() =>
   props.mode === 'unread' ? (active.value ? 'No unread papers match these filters.' : 'All caught up.')
   : props.mode === 'starred' ? 'No starred papers yet. Tap the star on a row (or press s).'
   : props.mode === 'deleted' ? 'No deleted papers. Delete one from its reader (or press d).'
+  : props.mode === 'folder' ? 'This folder is empty. Use "Add to" in a paper\'s reader.'
   : 'No papers match.');
 </script>
 
 <template>
   <div class="shell">
-    <TopBar ref="topbar" :title="titles[mode]" :count="visible.length" :is-phone="isPhone" :menu="!isWide" @menu="drawer = true" @mark-all="markAll" />
+    <TopBar ref="topbar" :title="title" :count="visible.length" :is-phone="isPhone" :menu="!isWide" @menu="drawer = true" @mark-all="markAll" />
     <FirstVisitBanner v-if="mode === 'unread'" :total="facets.total" />
     <FilterChips @add="drawer = true" />
     <div class="panes">

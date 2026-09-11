@@ -1,7 +1,7 @@
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import Icon from './Icon.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useFacets } from '../composables/useFacets.js';
 import { useFilters } from '../composables/useFilters.js';
 import { useLocalState } from '../composables/useLocalState.js';
@@ -9,6 +9,7 @@ import { useLocalState } from '../composables/useLocalState.js';
 const props = defineProps({ unreadCount: Number, showFolders: { type: Boolean, default: true } });
 const emit = defineEmits(['navigate']);
 const route = useRoute();
+const router = useRouter();
 const { facets } = useFacets();
 const { tags, collab, toggleTag, setCollab, active, clear } = useFilters();
 const ls = useLocalState();
@@ -23,13 +24,26 @@ try { saved = JSON.parse(localStorage.getItem(UI_KEY)) || {}; } catch { /* ignor
 const collapsed = reactive({ collabs: !!saved.collabs, tags: !!saved.tags });
 watch(collapsed, (v) => { try { localStorage.setItem(UI_KEY, JSON.stringify(v)); } catch { /* ignore */ } });
 
-const folders = [
+const builtin = [
   { to: '/all', label: 'All papers' },
   { to: '/unread', label: 'Unread' },
   { to: '/starred', label: 'Starred' },
-  { to: '/deleted', label: 'Deleted' },
 ];
-const folderCount = (f) => f.to === '/unread' ? props.unreadCount : f.to === '/starred' ? ls.starredIds().length : f.to === '/deleted' ? ls.deletedIds().length : f.to === '/all' ? Math.max(0, facets.value.total - ls.deletedIds().length) : null;
+const trash = { to: '/deleted', label: 'Deleted' };
+const userFolders = computed(() => ls.state.folders.map((f) => ({ to: `/folder/${f.id}`, label: f.name, id: f.id, n: Object.keys(f.ids).length })));
+
+function newFolder() { const name = window.prompt('Folder name'); if (name?.trim()) ls.addFolder(name); }
+function rename(f) { const name = window.prompt('Rename folder', f.label); if (name?.trim()) ls.renameFolder(f.id, name); }
+function remove(f) {
+  if (!window.confirm(`Delete folder "${f.label}"? Papers stay in the digest.`)) return;
+  ls.removeFolder(f.id);
+  if (route.path === f.to) router.replace('/all');
+}
+// Mouse drag to reorder user folders (HTML5 DnD; not available on touch).
+const dragging = ref(null);
+const over = ref(null);
+function drop(i) { if (dragging.value != null && dragging.value !== i) ls.moveFolder(dragging.value, i); dragging.value = over.value = null; }
+const folderCount = (f) => f.n != null ? f.n : f.to === '/unread' ? props.unreadCount : f.to === '/starred' ? ls.starredIds().length : f.to === '/deleted' ? ls.deletedIds().length : f.to === '/all' ? Math.max(0, facets.value.total - ls.deletedIds().length) : null;
 const isOn = (f) => route.path === f.to || (f.to === '/all' && route.path.startsWith('/paper'));
 const queryFor = () => ({ tags: route.query.tags, collab: route.query.collab, q: route.query.q });
 
@@ -58,9 +72,20 @@ async function doImport(e) {
 <template>
   <nav class="nav">
     <div v-if="showFolders" class="group">
-      <router-link v-for="f in folders" :key="f.to" :to="{ path: f.to, query: queryFor() }" class="row" :class="{ on: isOn(f) }" @click="emit('navigate')">
+      <router-link v-for="f in builtin" :key="f.to" :to="{ path: f.to, query: queryFor() }" class="row" :class="{ on: isOn(f) }" @click="emit('navigate')">
         <span>{{ f.label }}</span><span v-if="folderCount(f) != null" class="c mono">{{ folderCount(f) }}</span>
       </router-link>
+      <router-link v-for="(f, i) in userFolders" :key="f.id" :to="{ path: f.to, query: queryFor() }" class="row user" :class="{ on: isOn(f), over: over === i }"
+                   draggable="true" @dragstart="dragging = i" @dragover.prevent="over = i" @dragleave="over = null" @drop.prevent="drop(i)" @dragend="dragging = over = null"
+                   @click="emit('navigate')" @dblclick.prevent="rename(f)" :title="f.label">
+        <span class="lbl">{{ f.label }}</span>
+        <button class="x" :aria-label="`Delete folder ${f.label}`" title="Delete folder" @click.prevent.stop="remove(f)"><Icon name="close" :size="11" /></button>
+        <span class="c mono">{{ f.n }}</span>
+      </router-link>
+      <router-link :to="{ path: trash.to, query: queryFor() }" class="row" :class="{ on: isOn(trash) }" @click="emit('navigate')">
+        <span>{{ trash.label }}</span><span class="c mono">{{ folderCount(trash) }}</span>
+      </router-link>
+      <button class="more" @click="newFolder"><Icon name="plus" :size="12" /> New folder</button>
     </div>
 
     <div v-if="facets.collaborations.length" class="group">
@@ -109,8 +134,13 @@ async function doImport(e) {
 .row:hover { background: var(--rule-soft); }
 .row.on { background: var(--nav-on); color: var(--ink); font-weight: 600; }
 .row .c { font-size: 11px; color: var(--faint); }
+.row.user .lbl { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row.user .x { display: none; color: var(--faint); width: 16px; height: 16px; align-items: center; justify-content: center; border-radius: 4px; }
+.row.user:hover .x { display: flex; }
+.row.user .x:hover { color: var(--bad); background: var(--rule); }
+.row.user.over { box-shadow: inset 0 2px 0 var(--accent); }
 .row.on .c { color: var(--accent); }
-.more { align-self: flex-start; margin: 4px 8px 0; font-size: 12px; color: var(--accent); }
+.more { align-self: flex-start; margin: 4px 8px 0; font-size: 12px; color: var(--accent); display: flex; align-items: center; gap: 4px; }
 .foot { margin-top: auto; padding: 10px 8px 0; border-top: 1px solid var(--rule); font-size: 11.5px; color: var(--faint); display: flex; flex-direction: column; gap: 4px; }
 .links { display: flex; gap: 6px; }
 .links button { color: var(--text-3); font-weight: 500; }

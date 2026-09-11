@@ -3,7 +3,7 @@ import { reactive, readonly, watch } from 'vue';
 // Per-visitor state. There is no login: stars and read marks live in this
 // browser only. One versioned key so the shape can evolve.
 const KEY = 'arxivnu:v1';
-const EMPTY = () => ({ version: 1, stars: {}, read: {}, deleted: {}, readBefore: null, bannerDismissed: false });
+const EMPTY = () => ({ version: 1, stars: {}, read: {}, deleted: {}, folders: [], readBefore: null, bannerDismissed: false });
 
 function load() {
   try {
@@ -48,6 +48,23 @@ export function useLocalState() {
     if (state.deleted[id]) delete state.deleted[id];
     else state.deleted[id] = now();
   }
+  // User folders: ordered list of { id, name, ids: { arxivId: iso } }.
+  const folder = (fid) => state.folders.find((f) => f.id === fid);
+  function addFolder(name) {
+    const f = { id: Date.now().toString(36), name: name.trim(), ids: {} };
+    state.folders.push(f);
+    return f;
+  }
+  function renameFolder(fid, name) { const f = folder(fid); if (f) f.name = name.trim(); }
+  function removeFolder(fid) { const i = state.folders.findIndex((f) => f.id === fid); if (i >= 0) state.folders.splice(i, 1); }
+  function moveFolder(from, to) { const [f] = state.folders.splice(from, 1); state.folders.splice(to, 0, f); }
+  const inFolder = (fid, id) => !!folder(fid)?.ids[id];
+  function toggleInFolder(fid, id) {
+    const f = folder(fid);
+    if (!f) return;
+    if (f.ids[id]) delete f.ids[id];
+    else f.ids[id] = now();
+  }
   function markRead(ids) {
     const t = now();
     for (const id of ids) state.read[id] = t;
@@ -76,6 +93,11 @@ export function useLocalState() {
     Object.assign(state.stars, incoming.stars || {});
     Object.assign(state.read, incoming.read || {});
     Object.assign(state.deleted, incoming.deleted || {});
+    for (const f of incoming.folders || []) {
+      const mine = folder(f.id);
+      if (mine) Object.assign(mine.ids, f.ids || {});
+      else state.folders.push({ id: f.id, name: f.name, ids: { ...(f.ids || {}) } });
+    }
     if (incoming.readBefore && (!state.readBefore || incoming.readBefore > state.readBefore)) {
       state.readBefore = incoming.readBefore;
     }
@@ -84,8 +106,10 @@ export function useLocalState() {
 
   return {
     state: readonly(state), meta, isStarred, isRead, isDeleted, toggleStar, toggleRead, toggleDelete, markRead,
+    folder, addFolder, renameFolder, removeFolder, moveFolder, inFolder, toggleInFolder,
     setReadBefore, dismissBanner, exportJson, importJson,
     starredIds: () => Object.keys(state.stars),
     deletedIds: () => Object.keys(state.deleted),
+    folderIds: (fid) => Object.keys(folder(fid)?.ids || {}),
   };
 }

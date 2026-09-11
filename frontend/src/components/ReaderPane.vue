@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import Icon from './Icon.vue';
+import FolderMenu from './FolderMenu.vue';
 import { arxivUrl, fetchPaper, inspireUrl } from '../api.js';
 import { renderMath } from '../lib/math.js';
 import { longDay } from '../lib/dates.js';
@@ -39,6 +40,7 @@ function openArxiv() { ls.markRead([paper.value.arxiv_id]); }
           </button>
           <button class="btn" :class="{ 'read-on': read }" @click="ls.toggleRead(paper)"><Icon name="check" :size="13" />{{ read ? 'Read' : 'Mark read' }}</button>
           <button class="btn" :class="{ 'del-on': deleted }" @click="ls.toggleDelete(paper.arxiv_id)"><Icon name="trash" :size="13" />{{ deleted ? 'Restore' : 'Delete' }}</button>
+          <FolderMenu :paper-id="paper.arxiv_id" />
           <span class="sp"></span>
           <a class="btn" :href="arxivUrl(paper.arxiv_id)" target="_blank" rel="noopener" @click="openArxiv">arXiv<Icon name="external" :size="12" /></a>
           <a class="btn" :href="inspireUrl(paper.arxiv_id)" target="_blank" rel="noopener">InspireHEP<Icon name="external" :size="12" /></a>
@@ -76,6 +78,7 @@ function openArxiv() { ls.markRead([paper.value.arxiv_id]); }
         <a class="abtn" :href="arxivUrl(paper.arxiv_id)" target="_blank" rel="noopener" @click="openArxiv"><Icon name="external" :size="18" />arXiv</a>
         <a class="abtn" :href="inspireUrl(paper.arxiv_id)" target="_blank" rel="noopener"><Icon name="external" :size="18" />Inspire</a>
         <button class="abtn" :class="{ 'del-on': deleted }" @click="ls.toggleDelete(paper.arxiv_id)"><Icon name="trash" :size="18" />{{ deleted ? 'Restore' : 'Delete' }}</button>
+        <FolderMenu :paper-id="paper.arxiv_id" compact />
       </div>
     </template>
     <div v-else class="empty">Loading…</div>
@@ -98,7 +101,7 @@ section p { margin: 0; }
 .abs { font-size: 13px; line-height: 1.55; color: var(--text-3); }
 .foot { margin-top: auto; padding-top: 14px; font-size: 11.5px; color: var(--faint); }
 .actionbar { display: flex; gap: 8px; padding: 10px 12px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--rule); background: var(--pane); }
-.abtn { flex: 1; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--rule-hard); border-radius: var(--r-lg); background: var(--pane); color: var(--text-2); font-size: 11.5px; font-weight: 600; }
+.abtn, :deep(.abtn) { flex: 1; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--rule-hard); border-radius: var(--r-lg); background: var(--pane); color: var(--text-2); font-size: 11.5px; font-weight: 600; }
 .btn.del-on, .abtn.del-on { color: var(--bad); }
 .abtn.star-on { color: var(--star-ink); border-color: var(--star-rule); background: var(--star-bg); }
 .abtn.primary { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
