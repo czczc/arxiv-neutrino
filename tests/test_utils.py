@@ -24,3 +24,13 @@ def test_pick_prefers_curated_record():
     assert pick_collaboration(collabs) == "STAR"
     assert pick_collaboration([{"value": "(STAR Collaboration)*"}]) == "STAR"
     assert pick_collaboration([]) == ""
+
+
+def test_included_collaboration():
+    from arxivnu.fetch import is_included_collaboration
+    assert is_included_collaboration("LZ")
+    assert is_included_collaboration("DarkSide-50")
+    assert is_included_collaboration("Darkside-20k")
+    assert not is_included_collaboration("MicroBooNE")
+    assert not is_included_collaboration("")
+    assert not is_included_collaboration(None)

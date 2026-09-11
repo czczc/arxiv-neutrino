@@ -32,7 +32,7 @@ const REPO = 'https://github.com/czczc/arxiv-neutrino';
         <h2>How papers are filtered</h2>
         <ol>
           <li><b>Keyword pass.</b> Title and abstract are matched against neutrino terms (neutrino, oscillation, mass ordering, sterile, Majorana, double beta, and experiment names such as DUNE, JUNO, IceCube, T2K, NOvA, KamLAND). A match is kept as <i>certain</i>. Papers that only mention generic detector words (scintillator, PMT, SiPM, dark matter) are held as <i>ambiguous</i>. Everything else is dropped.</li>
-          <li><b>InspireHEP lookup.</b> Survivors are enriched with the collaboration name and document type. Conference proceedings are dropped, as are papers from collider collaborations with no neutrino programme.</li>
+          <li><b>InspireHEP lookup.</b> Survivors are enriched with the collaboration name and document type. Conference proceedings are dropped, as are papers from collider collaborations with no neutrino programme. Results from liquid-xenon and liquid-argon direct-detection experiments (LZ, XENON, PandaX, DarkSide, DEAP) are kept, since those detectors also do neutrino physics.</li>
           <li><b>AI review.</b> An LLM writes a two-to-three sentence summary of each remaining paper for a physicist reader and assigns tags from a fixed taxonomy (oscillations, cross-section, reactor, liquid-argon, machine-learning, theory, ...). For ambiguous papers it also decides whether the work is genuinely applicable to neutrino experiments and discards it otherwise. Summaries are machine-generated; check the abstract or paper before relying on a detail.</li>
         </ol>
 

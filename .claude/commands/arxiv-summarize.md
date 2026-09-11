@@ -16,7 +16,7 @@ Only assign tags from this exact list. Do not invent new tags.
 
 2. For each paper in `certain`: output `{"arxiv_id": "...", "keep": true, "summary": "...", "tags": [...]}`. Do not question relevance — just summarise and tag.
 
-3. For each paper in `ambiguous`: decide whether it is genuinely relevant to neutrino physics. A detector or data-analysis paper qualifies only if it is directly applicable to neutrino experiments (e.g. liquid argon TPC, water Cherenkov, scintillator detectors used in neutrino experiments). Output `{"arxiv_id": "...", "keep": true/false, "summary": "...", "tags": [...]}`. If `keep` is false, summary may be an empty string and tags an empty array.
+3. For each paper in `ambiguous`: decide whether it is genuinely relevant to neutrino physics. A detector or data-analysis paper qualifies only if it is directly applicable to neutrino experiments (e.g. liquid argon TPC, water Cherenkov, scintillator detectors used in neutrino experiments). Experimental results from liquid-xenon or liquid-argon direct-detection experiments (LZ, XENON, PandaX, DarkSide, DEAP and similar) also qualify: those detectors double as neutrino detectors for solar neutrinos, coherent neutrino-nucleus scattering and double beta decay, and their dark-matter searches share backgrounds and analysis methods with neutrino experiments. Dark-matter theory or model-building papers with no neutrino connection do not qualify. Output `{"arxiv_id": "...", "keep": true/false, "summary": "...", "tags": [...]}`. If `keep` is false, summary may be an empty string and tags an empty array.
 
 4. The `summary` must be 2–3 sentences written for a physicist reader. Summarise the key result or contribution — not the motivation. Be precise; use domain terminology.
 

@@ -21,6 +21,8 @@ browsers as a JSON file from the top bar.
    PMT, SiPM, dark matter) mark it *ambiguous*; anything else is dropped.
 2. **InspireHEP lookup** for the survivors. Conference proceedings are dropped,
    as are papers from collider collaborations with no neutrino programme.
+   Results from liquid-noble direct-detection experiments (LZ, XENON, PandaX,
+   DarkSide, DEAP) are promoted to *certain*.
 3. **LLM review.** Each remaining paper gets a two-to-three sentence summary
    written for a physicist and tags from the taxonomy in
    `.claude/commands/arxiv-summarize.md`. Ambiguous papers are also judged for

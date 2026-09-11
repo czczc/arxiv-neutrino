@@ -56,6 +56,17 @@ EXCLUDED_COLLABORATIONS = {
     "CDF", "D0", "NA61/SHINE", "COMPASS", "NA62",
 }
 
+# Direct-detection experiments whose liquid-noble detectors also do neutrino
+# physics (solar neutrinos, CEvNS, double beta decay). Their papers rarely say
+# "neutrino", so an InspireHEP match promotes them from ambiguous to certain.
+# Matched case-insensitively on the family name (DarkSide-50, Darkside-20k, ...).
+INCLUDED_COLLABORATION_PREFIXES = ("lz", "lux", "xenon", "pandax", "darkside", "deap")
+
+
+def is_included_collaboration(name: str | None) -> bool:
+    return bool(name) and name.casefold().startswith(INCLUDED_COLLABORATION_PREFIXES)
+
+
 # Proceedings heuristic on ArXiv comment field
 PROCEEDINGS_RE = re.compile(
     r"(proceedings|talk\s+given|contribution\s+to|PoS\s*\(|conference\s+paper"
@@ -294,6 +305,8 @@ def main():
     survivors = certain + ambiguous
     print(f"\nFetching InspireHEP for {len(survivors)} papers...")
     enriched: list[dict] = []
+    ambiguous_ids = {p["arxiv_id"] for p in ambiguous}
+    promoted: list[dict] = []
     for i, p in enumerate(survivors):
         print(f"  [{i+1}/{len(survivors)}] {p['arxiv_id']}...", end=" ", flush=True)
         inspire = fetch_inspirehep(p["arxiv_id"], p["title"])
@@ -309,6 +322,12 @@ def main():
             if inspire["collaboration"] in EXCLUDED_COLLABORATIONS:
                 print(f"dropped (collider experiment: {inspire['collaboration']})")
                 skipped_keyword += 1
+                continue
+            if p["arxiv_id"] in ambiguous_ids and is_included_collaboration(inspire["collaboration"]):
+                ambiguous_ids.discard(p["arxiv_id"])
+                promoted.append(p)
+                print(f"ok, promoted to certain (collab={inspire['collaboration']})")
+                enriched.append(p)
                 continue
             print(f"ok ({inspire['document_type'] or 'unknown type'}, collab={inspire['collaboration'] or 'none'})")
         else:
@@ -330,8 +349,8 @@ def main():
 
     # Write pending.json for LLM step — re-split after InspireHEP filtering
     enriched_ids = {p["arxiv_id"] for p in enriched}
-    final_certain = [p for p in certain if p["arxiv_id"] in enriched_ids]
-    final_ambiguous = [p for p in ambiguous if p["arxiv_id"] in enriched_ids]
+    final_certain = [p for p in certain if p["arxiv_id"] in enriched_ids] + promoted
+    final_ambiguous = [p for p in ambiguous if p["arxiv_id"] in enriched_ids and p["arxiv_id"] in ambiguous_ids]
 
     pending = {
         "fetch_date": fetch_date,
