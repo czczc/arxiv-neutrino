@@ -17,6 +17,7 @@ const paths = {
   sync: 'M7 20V4m0 0L3 8m4-4l4 4M17 4v16m0 0l4-4m-4 4l-4-4',
   download: 'M12 4v12m0 0l-4-4m4 4l4-4M4 20h16',
   upload: 'M12 16V4m0 0L8 8m4-4l4 4M4 20h16',
+  edit: 'M4 20h4l11-11-4-4L4 16zM13 7l4 4',
   info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8v.5',
   trash: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5',
   inbox: 'M4 5h16v11H4zM4 16l3-4h10l3 4',

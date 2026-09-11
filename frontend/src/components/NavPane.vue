@@ -56,6 +56,7 @@ const queryFor = () => ({ tags: route.query.tags, collab: route.query.collab, q:
                    draggable="true" @dragstart="dragging = i" @dragover.prevent="over = i" @dragleave="over = null" @drop.prevent="drop(i)" @dragend="dragging = over = null"
                    @click="emit('navigate')" @dblclick.prevent="rename(f)" :title="f.label">
         <span class="lbl">{{ f.label }}</span>
+        <button class="x" :aria-label="`Rename folder ${f.label}`" title="Rename folder" @click.prevent.stop="rename(f)"><Icon name="edit" :size="11" /></button>
         <button class="x" :aria-label="`Delete folder ${f.label}`" title="Delete folder" @click.prevent.stop="remove(f)"><Icon name="close" :size="11" /></button>
         <span class="c mono">{{ f.n }}</span>
       </router-link>
@@ -104,7 +105,8 @@ const queryFor = () => ({ tags: route.query.tags, collab: route.query.collab, q:
 .row.user .lbl { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row.user .x { display: none; color: var(--faint); width: 16px; height: 16px; align-items: center; justify-content: center; border-radius: 4px; }
 .row.user:hover .x { display: flex; }
-.row.user .x:hover { color: var(--bad); background: var(--rule); }
+.row.user .x:hover { color: var(--ink); background: var(--rule); }
+.row.user .x:last-of-type:hover { color: var(--bad); }
 .row.user.over { box-shadow: inset 0 2px 0 var(--accent); }
 .row.on .c { color: var(--accent); }
 .more { align-self: flex-start; margin: 4px 8px 0; font-size: 12px; color: var(--accent); display: flex; align-items: center; gap: 4px; }
