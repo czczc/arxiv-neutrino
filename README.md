@@ -1,11 +1,34 @@
-# ArXiv Neutrino
+# Neutrino Daily
 
-Daily digest of neutrino-physics papers from arXiv (hep-ex, nucl-ex,
-physics.ins-det, physics.data-an), filtered by keyword and InspireHEP metadata,
-summarised and tagged by Claude, served as a small web app.
+A daily feed of new experimental neutrino-physics papers on arXiv, served as a
+small triage-inbox web app.
 
-There is no login. Stars and read marks are stored in the visitor's browser
-(localStorage) and can be exported/imported as JSON.
+Each morning the pipeline reads the previous day's listings in `hep-ex`,
+`nucl-ex`, `physics.ins-det` and `physics.data-an`, keeps the papers that are
+about neutrino physics, enriches them with collaboration and document-type
+metadata from InspireHEP, and has an LLM write a short summary and assign tags
+from a fixed taxonomy. The result is browsable by day, collaboration and tag,
+with full-text search.
+
+There is no login. Everything a visitor does (stars, read marks, deletions,
+user-defined folders) is stored in their own browser and can be moved between
+browsers as a JSON file from the top bar.
+
+## How papers are selected
+
+1. **Keyword pass** over title and abstract. Neutrino terms and experiment
+   names mark a paper as *certain*; generic detector words only (scintillator,
+   PMT, SiPM, dark matter) mark it *ambiguous*; anything else is dropped.
+2. **InspireHEP lookup** for the survivors. Conference proceedings are dropped,
+   as are papers from collider collaborations with no neutrino programme.
+3. **LLM review.** Each remaining paper gets a two-to-three sentence summary
+   written for a physicist and tags from the taxonomy in
+   `.claude/commands/arxiv-summarize.md`. Ambiguous papers are also judged for
+   relevance and dropped if they are not applicable to neutrino experiments.
+
+The rules live in `arxivnu/fetch.py`.
+
+## Layout
 
 ```
 arxivnu/          Python package
@@ -15,8 +38,8 @@ arxivnu/          Python package
   exclude.py      hide a paper for good; curation, server-side only    (arxiv-exclude)
   api.py          FastAPI: read-only /api/* + serves frontend/dist
   db.py           SQLite schema; ARXIV_DB / ARXIV_WORK env overrides
-frontend/         Vite + Vue 3 SPA ("Triage Inbox": facets · list · reader)
-scripts/          daily.sh (pipeline), deploy.sh (server), export_local_state.py
+frontend/         Vite + Vue 3 SPA (nav · paper list · reader; calendar archive; about)
+scripts/          daily.sh (pipeline), deploy.sh (server)
 .claude/commands/arxiv-summarize.md   the Claude Code skill used by the pipeline
 ```
 
@@ -41,28 +64,8 @@ scripts/daily.sh
 ```
 
 1. `arxiv-fetch` pulls today's papers, filters, enriches via InspireHEP, writes `pending.json`
-2. `claude -p "/arxiv-summarize"` (Claude Code CLI, Haiku) writes `results.json`
+2. `claude -p "/arxiv-summarize"` (Claude Code CLI) writes `results.json`
 3. `arxiv-apply` writes summaries and tags to the DB
 
-Backfill: `uv run arxiv-backfill --from 2026-05-08 --to 2026-05-10 && scripts/daily.sh`.
-Exclude a paper: `uv run arxiv-exclude 2609.12345` (`--undo` to restore).
-
-## Production
-
-`arxivnu.api:app` under uvicorn on a loopback port behind a reverse proxy,
-optionally under a URL sub-path (build the SPA with `VITE_BASE=/<prefix>/` and
-start uvicorn with `--root-path /<prefix>`). `scripts/daily.sh` runs from a
-systemd timer or cron; the Claude Code CLI authenticates headless with a
-long-lived token from `claude setup-token` in `CLAUDE_CODE_OAUTH_TOKEN`.
-Host-specific values go in `scripts/deploy.env` (gitignored), read by
-`scripts/deploy.sh`. Environment variables: `ARXIV_DB`, `ARXIV_WORK`,
-`CLAUDE_MODEL`.
-
-## Moving your old read marks into the browser
-
-The pre-0.2 app kept read/star state in the database. Export it once and use
-the Import button in the app's left pane:
-
-```bash
-uv run python scripts/export_local_state.py > my-marks.json
-```
+Backfill a date range: `uv run arxiv-backfill --from 2026-05-08 --to 2026-05-10 && scripts/daily.sh`.
+Hide a paper for everyone: `uv run arxiv-exclude 2609.12345` (`--undo` to restore).

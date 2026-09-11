@@ -18,7 +18,7 @@ const REPO = 'https://github.com/czczc/arxiv-neutrino';
       <NavPane v-if="isWide" />
       <div class="content">
         <h1>Neutrino Daily</h1>
-        <p>A daily digest of new <b>experimental neutrino physics</b> papers on arXiv, filtered, summarised and tagged automatically, and served as a triage inbox. The focus is experiments, detectors and data analysis.</p>
+        <p>A daily feed of new <b>experimental neutrino physics</b> papers on arXiv, filtered, summarised and tagged automatically, and served as a triage inbox. The focus is experiments, detectors and data analysis.</p>
 
         <h2>What is collected</h2>
         <p>Every morning (07:00 US Eastern) the pipeline reads the previous day's arXiv listings in four categories:</p>
@@ -37,7 +37,8 @@ const REPO = 'https://github.com/czczc/arxiv-neutrino';
         </ol>
 
         <h2>Reading</h2>
-        <p>There is no login. Stars, read marks and deletions live in this browser's local storage and can be exported and imported as JSON from the left pane. Deleted papers are hidden from every list except the Deleted folder.</p>
+        <p>There is no login. Stars, read marks, deletions and folders live in this browser's local storage. Use the export/import button in the top bar to move them to another browser as a JSON file. Deleted papers are hidden from every list except the Deleted folder.</p>
+        <p><b>Folders.</b> Create your own folders with "New folder" in the left pane and file a paper into any number of them with "Add to" in its reader. Drag folders to reorder them, double-click one to rename it, and use the cross that appears on hover to delete it. Deleting a folder does not delete its papers.</p>
         <p>Keyboard: <b>j</b>/<b>k</b> move, <b>s</b> star, <b>e</b> mark read, <b>d</b> delete, <b>o</b> open on arXiv, <b>/</b> search.</p>
 
         <h2>Source</h2>

@@ -15,8 +15,6 @@ const { tags, collab, toggleTag, setCollab, active, clear } = useFilters();
 const ls = useLocalState();
 const showAllTags = ref(false);
 const showAllCollabs = ref(false);
-const fileInput = ref(null);
-const importMsg = ref('');
 
 const UI_KEY = 'arxivnu:nav:v1';
 let saved = {};
@@ -35,7 +33,7 @@ const userFolders = computed(() => ls.state.folders.map((f) => ({ to: `/folder/$
 function newFolder() { const name = window.prompt('Folder name'); if (name?.trim()) ls.addFolder(name); }
 function rename(f) { const name = window.prompt('Rename folder', f.label); if (name?.trim()) ls.renameFolder(f.id, name); }
 function remove(f) {
-  if (!window.confirm(`Delete folder "${f.label}"? Papers stay in the digest.`)) return;
+  if (!window.confirm(`Delete folder "${f.label}"? The papers themselves are kept.`)) return;
   ls.removeFolder(f.id);
   if (route.path === f.to) router.replace('/all');
 }
@@ -46,27 +44,6 @@ function drop(i) { if (dragging.value != null && dragging.value !== i) ls.moveFo
 const folderCount = (f) => f.n != null ? f.n : f.to === '/unread' ? props.unreadCount : f.to === '/starred' ? ls.starredIds().length : f.to === '/deleted' ? ls.deletedIds().length : f.to === '/all' ? Math.max(0, facets.value.total - ls.deletedIds().length) : null;
 const isOn = (f) => route.path === f.to || (f.to === '/all' && route.path.startsWith('/paper'));
 const queryFor = () => ({ tags: route.query.tags, collab: route.query.collab, q: route.query.q });
-
-function doExport() {
-  const blob = new Blob([ls.exportJson()], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `arxiv-neutrino-marks-${new Date().toISOString().slice(0, 10)}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-async function doImport(e) {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  try {
-    const n = ls.importJson(await file.text());
-    importMsg.value = `Imported ${n.stars} stars, ${n.read} read marks`;
-  } catch {
-    importMsg.value = 'Could not read that file';
-  }
-  e.target.value = '';
-  setTimeout(() => (importMsg.value = ''), 4000);
-}
 </script>
 
 <template>
@@ -110,16 +87,6 @@ async function doImport(e) {
 
     <button v-if="active" class="more" @click="clear">Clear filters</button>
 
-    <div class="foot">
-      <div>Stars and read marks are kept in this browser only.</div>
-      <div class="links">
-        <button @click="doExport">Export</button>
-        <span>·</span>
-        <button @click="fileInput.click()">Import</button>
-        <input ref="fileInput" type="file" accept="application/json" hidden @change="doImport" />
-      </div>
-      <div v-if="importMsg" class="msg">{{ importMsg }}</div>
-    </div>
   </nav>
 </template>
 
@@ -141,17 +108,11 @@ async function doImport(e) {
 .row.user.over { box-shadow: inset 0 2px 0 var(--accent); }
 .row.on .c { color: var(--accent); }
 .more { align-self: flex-start; margin: 4px 8px 0; font-size: 12px; color: var(--accent); display: flex; align-items: center; gap: 4px; }
-.foot { margin-top: auto; padding: 10px 8px 0; border-top: 1px solid var(--rule); font-size: 11.5px; color: var(--faint); display: flex; flex-direction: column; gap: 4px; }
-.links { display: flex; gap: 6px; }
-.links button { color: var(--text-3); font-weight: 500; }
-.msg { color: var(--good); }
 @media (max-width: 699px) {
   .nav { width: min(320px, 85vw); padding: 14px 12px; gap: 18px; }
   .row { min-height: 44px; font-size: 15px; padding: 0 12px; }
   .h4 { min-height: 36px; font-size: 12px; }
   .row .c { font-size: 12.5px; }
   .more { font-size: 14px; min-height: 44px; display: flex; align-items: center; }
-  .foot { font-size: 13px; }
-  .links button { min-height: 44px; padding: 0 6px; }
 }
 </style>
