@@ -3,7 +3,7 @@ import { reactive, readonly, watch } from 'vue';
 // Per-visitor state. There is no login: stars and read marks live in this
 // browser only. One versioned key so the shape can evolve.
 const KEY = 'arxivnu:v1';
-const EMPTY = () => ({ version: 1, stars: {}, read: {}, readBefore: null, bannerDismissed: false });
+const EMPTY = () => ({ version: 1, stars: {}, read: {}, deleted: {}, readBefore: null, bannerDismissed: false });
 
 function load() {
   try {
@@ -36,12 +36,17 @@ const now = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
 
 export function useLocalState() {
   const isStarred = (id) => !!state.stars[id];
+  const isDeleted = (id) => !!state.deleted[id];
   const isRead = (p) =>
     !!state.read[p.arxiv_id] || (!!state.readBefore && !!p.submitted_date && p.submitted_date < state.readBefore);
 
   function toggleStar(id) {
     if (state.stars[id]) delete state.stars[id];
     else state.stars[id] = now();
+  }
+  function toggleDelete(id) {
+    if (state.deleted[id]) delete state.deleted[id];
+    else state.deleted[id] = now();
   }
   function markRead(ids) {
     const t = now();
@@ -70,6 +75,7 @@ export function useLocalState() {
     if (!incoming || typeof incoming !== 'object') throw new Error('not an object');
     Object.assign(state.stars, incoming.stars || {});
     Object.assign(state.read, incoming.read || {});
+    Object.assign(state.deleted, incoming.deleted || {});
     if (incoming.readBefore && (!state.readBefore || incoming.readBefore > state.readBefore)) {
       state.readBefore = incoming.readBefore;
     }
@@ -77,8 +83,9 @@ export function useLocalState() {
   }
 
   return {
-    state: readonly(state), meta, isStarred, isRead, toggleStar, toggleRead, markRead,
+    state: readonly(state), meta, isStarred, isRead, isDeleted, toggleStar, toggleRead, toggleDelete, markRead,
     setReadBefore, dismissBanner, exportJson, importJson,
     starredIds: () => Object.keys(state.stars),
+    deletedIds: () => Object.keys(state.deleted),
   };
 }

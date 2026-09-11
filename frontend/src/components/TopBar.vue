@@ -34,7 +34,7 @@ defineExpose({ focusSearch });
 <template>
   <header class="bar">
     <button v-if="menu" class="icon-btn" aria-label="Filters" @click="emit('menu')"><Icon name="menu" :size="22" /></button>
-    <span v-if="!isPhone" class="brand">Neutrino Daily</span>
+    <router-link v-if="!isPhone" to="/" class="brand">Neutrino Daily</router-link>
 
     <div v-if="isPhone && !showSearch" class="title">{{ title }} <span class="mono n">{{ count }}</span></div>
 
@@ -47,6 +47,7 @@ defineExpose({ focusSearch });
     <template v-if="isPhone">
       <button v-if="!showSearch" class="icon-btn" aria-label="Search" @click="focusSearch"><Icon name="search" :size="20" /></button>
       <button class="icon-btn" aria-label="Mark all read" title="Mark all loaded as read" @click="emit('mark-all')"><Icon name="check-all" :size="20" /></button>
+      <router-link to="/about" class="icon-btn" aria-label="About"><Icon name="info" :size="20" /></router-link>
       <div ref="themeEl" class="theme-wrap">
         <button class="icon-btn" aria-label="Theme" @click="themeOpen = !themeOpen"><Icon :name="isDark() ? 'moon' : 'sun'" :size="20" /></button>
         <div v-if="themeOpen" class="pop"><ThemePicker /></div>
@@ -54,8 +55,8 @@ defineExpose({ focusSearch });
     </template>
     <template v-else>
       <button class="btn" @click="emit('mark-all')"><Icon name="check-all" :size="13" />Mark all read</button>
-      <div class="kbd"><span><b>j</b><b>k</b> move</span><span><b>s</b> star</span><span><b>e</b> read · next</span><span><b>o</b> arXiv</span></div>
-      <div class="local" title="Stars and read marks are stored in this browser only"><i></i>Local</div>
+      <div class="kbd"><span><b>j</b><b>k</b> move</span><span><b>s</b> star</span><span><b>e</b> read · next</span><span><b>o</b> arXiv</span><span><b>d</b> delete</span></div>
+      <router-link to="/about" class="btn theme-btn" aria-label="About" title="About"><Icon name="info" :size="14" /></router-link>
       <div ref="themeEl" class="theme-wrap">
         <button class="btn theme-btn" aria-label="Theme" title="Theme" @click="themeOpen = !themeOpen"><Icon :name="isDark() ? 'moon' : 'sun'" :size="14" /></button>
         <div v-if="themeOpen" class="pop"><ThemePicker /></div>
@@ -74,8 +75,6 @@ defineExpose({ focusSearch });
 .clear { color: var(--faint); display: flex; }
 .kbd { display: flex; gap: 10px; margin-left: auto; font-size: 11.5px; color: var(--faint); white-space: nowrap; }
 .kbd b { font-family: var(--font-mono); font-weight: 500; padding: 1px 5px; margin-right: 2px; border: 1px solid var(--rule-hard); border-bottom-width: 2px; border-radius: 4px; color: var(--text-3); background: var(--pane); }
-.local { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--dim); }
-.local i { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
 .icon-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: var(--r-lg); color: var(--text-2); flex-shrink: 0; }
 .theme-wrap { position: relative; }
 .theme-btn { width: 28px; padding: 0; justify-content: center; }

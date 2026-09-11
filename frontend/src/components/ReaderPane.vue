@@ -23,6 +23,7 @@ const title = computed(() => renderMath(paper.value?.title));
 const abstract = computed(() => renderMath(paper.value?.abstract));
 const read = computed(() => paper.value && ls.isRead(paper.value));
 const starred = computed(() => paper.value && ls.isStarred(paper.value.arxiv_id));
+const deleted = computed(() => paper.value && ls.isDeleted(paper.value.arxiv_id));
 function openArxiv() { ls.markRead([paper.value.arxiv_id]); }
 </script>
 
@@ -37,6 +38,7 @@ function openArxiv() { ls.markRead([paper.value.arxiv_id]); }
             <svg width="13" height="13" viewBox="0 0 24 24" :fill="starred ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2"><path d="M12 3.5l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17.4l-5.4 2.9 1.1-6.1L3.2 9.9l6.1-.8z" /></svg>{{ starred ? 'Starred' : 'Star' }}
           </button>
           <button class="btn" :class="{ 'read-on': read }" @click="ls.toggleRead(paper)"><Icon name="check" :size="13" />{{ read ? 'Read' : 'Mark read' }}</button>
+          <button class="btn" :class="{ 'del-on': deleted }" @click="ls.toggleDelete(paper.arxiv_id)"><Icon name="trash" :size="13" />{{ deleted ? 'Restore' : 'Delete' }}</button>
           <span class="sp"></span>
           <a class="btn" :href="arxivUrl(paper.arxiv_id)" target="_blank" rel="noopener" @click="openArxiv">arXiv<Icon name="external" :size="12" /></a>
           <a class="btn" :href="inspireUrl(paper.arxiv_id)" target="_blank" rel="noopener">InspireHEP<Icon name="external" :size="12" /></a>
@@ -73,6 +75,7 @@ function openArxiv() { ls.markRead([paper.value.arxiv_id]); }
         <button class="abtn primary" @click="emit('read-next', paper)"><Icon name="check" :size="18" />{{ read ? 'Next' : 'Read · next' }}</button>
         <a class="abtn" :href="arxivUrl(paper.arxiv_id)" target="_blank" rel="noopener" @click="openArxiv"><Icon name="external" :size="18" />arXiv</a>
         <a class="abtn" :href="inspireUrl(paper.arxiv_id)" target="_blank" rel="noopener"><Icon name="external" :size="18" />Inspire</a>
+        <button class="abtn" :class="{ 'del-on': deleted }" @click="ls.toggleDelete(paper.arxiv_id)"><Icon name="trash" :size="18" />{{ deleted ? 'Restore' : 'Delete' }}</button>
       </div>
     </template>
     <div v-else class="empty">Loading…</div>
@@ -96,6 +99,7 @@ section p { margin: 0; }
 .foot { margin-top: auto; padding-top: 14px; font-size: 11.5px; color: var(--faint); }
 .actionbar { display: flex; gap: 8px; padding: 10px 12px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--rule); background: var(--pane); }
 .abtn { flex: 1; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--rule-hard); border-radius: var(--r-lg); background: var(--pane); color: var(--text-2); font-size: 11.5px; font-weight: 600; }
+.btn.del-on, .abtn.del-on { color: var(--bad); }
 .abtn.star-on { color: var(--star-ink); border-color: var(--star-rule); background: var(--star-bg); }
 .abtn.primary { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
 .compact { background: var(--pane); }

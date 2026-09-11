@@ -18,7 +18,7 @@ const total = computed(() => queue.ids.value.length);
 const prevId = computed(() => (idx.value > 0 ? queue.ids.value[idx.value - 1] : null));
 const nextId = computed(() => (idx.value >= 0 && idx.value < total.value - 1 ? queue.ids.value[idx.value + 1] : null));
 
-function back() { if (window.history.length > 1) router.back(); else router.push('/unread'); }
+function back() { if (window.history.length > 1) router.back(); else router.push('/all'); }
 function go(id) { router.replace(`/paper/${id}`); }
 function readNext(paper) {
   ls.markRead([paper.arxiv_id]);

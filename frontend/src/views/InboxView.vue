@@ -34,10 +34,12 @@ const drawer = ref(false);
 const topbar = ref(null);
 const selectedId = computed(() => String(route.query.paper || ''));
 
-const titles = { unread: 'Unread', starred: 'Starred', all: 'All papers' };
-const visible = computed(() => props.mode === 'unread'
-  ? papers.value.filter((p) => !ls.isRead(p) || p.arxiv_id === selectedId.value)
-  : papers.value);
+const titles = { unread: 'Unread', starred: 'Starred', all: 'All papers', deleted: 'Deleted' };
+const byIds = computed(() => props.mode === 'starred' || props.mode === 'deleted');
+// Deleted papers show only in the Deleted folder.
+const visible = computed(() => props.mode === 'deleted' ? papers.value.filter((p) => ls.isDeleted(p.arxiv_id))
+  : props.mode === 'unread' ? papers.value.filter((p) => (!ls.isRead(p) || p.arxiv_id === selectedId.value) && !ls.isDeleted(p.arxiv_id))
+  : papers.value.filter((p) => !ls.isDeleted(p.arxiv_id)));
 const unreadLoaded = computed(() => papers.value.filter((p) => !ls.isRead(p)).length);
 const hasMore = computed(() => !exhausted.value);
 
@@ -46,8 +48,8 @@ async function loadPage(reset = false) {
   loading.value = true;
   try {
     if (reset) { papers.value = []; nextBefore.value = null; exhausted.value = false; }
-    if (props.mode === 'starred') {
-      const ids = ls.starredIds();
+    if (byIds.value) {
+      const ids = props.mode === 'starred' ? ls.starredIds() : ls.deletedIds();
       const out = [];
       for (let i = 0; i < ids.length; i += 150) {
         const r = await fetchPapers({ ...apiParams.value, ids: ids.slice(i, i + 150).join(',') });
@@ -71,7 +73,10 @@ async function loadPage(reset = false) {
 watch([visible, loading, exhausted], () => {
   if (props.mode === 'unread' && !loading.value && !exhausted.value && visible.value.length < 15) loadPage();
 });
-watch([() => props.mode, apiParams], () => loadPage(true), { immediate: true, deep: true });
+// Key on values, not the apiParams object: selecting a row rewrites the
+// route query (?paper=), which would otherwise recreate the object and reload.
+const listKey = computed(() => JSON.stringify([props.mode, apiParams.value]));
+watch(listKey, () => loadPage(true), { immediate: true });
 
 function select(p) {
   if (isPhone.value) {
@@ -97,6 +102,7 @@ function onKey(e) {
     case 'k': case 'ArrowUp': if (list.length) select(list[Math.max(idx - 1, 0)]); e.preventDefault(); break;
     case 's': if (cur) ls.toggleStar(cur.arxiv_id); break;
     case 'e': if (cur) { if (props.mode === 'unread') { ls.markRead([cur.arxiv_id]); if (list[idx + 1]) select(list[idx + 1]); } else ls.toggleRead(cur); } break;
+    case 'd': if (cur) { ls.toggleDelete(cur.arxiv_id); if (list[idx + 1]) select(list[idx + 1]); } break;
     case 'o': if (cur) { ls.markRead([cur.arxiv_id]); window.open(arxivUrl(cur.arxiv_id), '_blank', 'noopener'); } break;
     case '/': topbar.value?.focusSearch(); e.preventDefault(); break;
   }
@@ -107,6 +113,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 const emptyText = computed(() =>
   props.mode === 'unread' ? (active.value ? 'No unread papers match these filters.' : 'All caught up.')
   : props.mode === 'starred' ? 'No starred papers yet. Tap the star on a row (or press s).'
+  : props.mode === 'deleted' ? 'No deleted papers. Delete one from its reader (or press d).'
   : 'No papers match.');
 </script>
 

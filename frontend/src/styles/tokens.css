@@ -32,7 +32,7 @@
   --star-ink: oklch(0.45 0.13 65);
   --star-bg: oklch(0.97 0.03 65);
   --star-rule: oklch(0.85 0.08 65);
-  --good: oklch(0.55 0.13 150);
+  --good: oklch(0.55 0.13 150); --bad: oklch(0.52 0.16 25);
   --collab-bg: oklch(0.94 0.04 65);
   --banner-bg: #fff8e6;
   --banner-rule: oklch(0.88 0.08 80);
@@ -58,7 +58,7 @@
   --rule: #e6dfcd; --rule-soft: #ede7d7; --rule-hard: #cdc3aa; --scrim: rgba(28, 24, 18, 0.35);
   --accent: oklch(0.55 0.13 55); --accent-ink: oklch(0.42 0.13 55);
   --star: oklch(0.6 0.15 65); --star-ink: oklch(0.45 0.13 65); --star-bg: oklch(0.96 0.03 70); --star-rule: oklch(0.85 0.08 65);
-  --good: oklch(0.50 0.10 145); --collab-bg: oklch(0.93 0.05 70);
+  --good: oklch(0.50 0.10 145); --bad: oklch(0.50 0.14 30); --collab-bg: oklch(0.93 0.05 70);
   --banner-bg: oklch(0.96 0.04 85); --banner-rule: oklch(0.86 0.08 80);
 }
 
@@ -71,7 +71,7 @@
   --rule: #dbe5de; --rule-soft: #e8efea; --rule-hard: #c9d6cd; --scrim: rgba(18, 26, 21, 0.35);
   --accent: oklch(0.50 0.12 155); --accent-ink: oklch(0.40 0.12 155);
   --star: oklch(0.6 0.15 65); --star-ink: oklch(0.45 0.13 65); --star-bg: oklch(0.97 0.03 65); --star-rule: oklch(0.85 0.08 65);
-  --good: oklch(0.50 0.12 155); --collab-bg: oklch(0.94 0.04 65);
+  --good: oklch(0.50 0.12 155); --bad: oklch(0.52 0.15 25); --collab-bg: oklch(0.94 0.04 65);
   --banner-bg: #f6f3e2; --banner-rule: oklch(0.88 0.08 80);
 }
 
@@ -84,7 +84,7 @@
   --rule: #e2dfeb; --rule-soft: #edeaf3; --rule-hard: #cfcadd; --scrim: rgba(22, 20, 31, 0.35);
   --accent: oklch(0.52 0.16 295); --accent-ink: oklch(0.42 0.16 295);
   --star: oklch(0.6 0.15 65); --star-ink: oklch(0.45 0.13 65); --star-bg: oklch(0.97 0.03 65); --star-rule: oklch(0.85 0.08 65);
-  --good: oklch(0.55 0.13 150); --collab-bg: oklch(0.94 0.04 65);
+  --good: oklch(0.55 0.13 150); --bad: oklch(0.52 0.16 25); --collab-bg: oklch(0.94 0.04 65);
   --banner-bg: #f8f2e6; --banner-rule: oklch(0.88 0.08 80);
 }
 
@@ -96,6 +96,6 @@
   --rule: #2b313c; --rule-soft: #242932; --rule-hard: #3a4150; --scrim: rgba(0, 0, 0, 0.55);
   --accent: oklch(0.72 0.12 250); --accent-ink: oklch(0.80 0.10 250);
   --star: oklch(0.75 0.14 75); --star-ink: oklch(0.82 0.12 80); --star-bg: oklch(0.30 0.05 70); --star-rule: oklch(0.42 0.08 70);
-  --good: oklch(0.70 0.12 150); --collab-bg: oklch(0.32 0.05 65);
+  --good: oklch(0.70 0.12 150); --bad: oklch(0.72 0.14 25); --collab-bg: oklch(0.32 0.05 65);
   --banner-bg: #2c2716; --banner-rule: #4a4020;
 }
